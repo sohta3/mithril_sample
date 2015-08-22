@@ -1,0 +1,26 @@
+{
+  "name": "mithril_sample",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:msx": "msx -x jsx --no-precompile assets/js/ assets/js/",
+    "build:js": "npm run build:msx && browserify assets/js/app.js -o dist/js/app.js",
+    "build:ts": "node_modules/.bin/tsc --module commonjs assets/ts/app.ts",
+    "build": "npm run build:msx && npm run build:ts && browserify assets/ts/app.js -o dist/js/app.js "
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^2.8.2",
+    "http-server": "^0.8.0",
+    "mithril": "^0.2.0",
+    "typescript": "^1.5.3"
+  },
+  "dependencies": {
+    "browserify": "^11.0.1",
+    "mithril": "^0.2.0",
+    "msx": "^0.4.1",
+    "typescript": "^1.5.3"
+  }
+}
