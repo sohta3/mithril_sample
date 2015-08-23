@@ -2,47 +2,46 @@
 
 import m = require('mithril');
 
-var todo:any = {};
+class Todo {
+	description:_mithril.MithrilProperty<string>;
+	done:_mithril.MithrilProperty<boolean>;
 
-todo.Todo = function (data):void {
-	this.description = m.prop(data.description);
-	this.done = m.prop(false);
-};
+	constructor(params) {
+		this.description = m.prop(params.description);
+		this.done = m.prop(false);
+	}
+}
 
-todo.TodoList = Array;
+class TodoController implements _mithril.MithrilController {
+	list:Todo[];
+	description:_mithril.MithrilProperty<string>;
+	add:() => void;
 
-todo.vm = (function () {
-	var vm:any = {};
-	vm.init = function ():any {
-		vm.list = new todo.TodoList();
+	constructor() {
+		this.description = m.prop('');
+		this.list = [];
 
-		vm.description = m.prop('');
-
-		vm.add = function () {
-			if (vm.description()) {
-				vm.list.push(new todo.Todo({description: vm.description()}));
-				vm.description('');
+		this.add = () => {
+			if (this.description()) {
+				this.list.push(new Todo({description: this.description()}));
+				this.description('');
 			}
 		}
 	}
-
-	return vm;
-}());
-
-console.log(todo.vm.description);
-
-todo.controller = function() {
-	todo.vm.init()
 }
 
-todo.view = function () {
+var todoControllerFunction:_mithril.MithrilControllerFunction = function () {
+	return new TodoController();
+};
 
+
+var todoView:_mithril.MithrilView<TodoController> = function (ctrl:TodoController) {
 	return m("html", [
 		m("body", [
-			m("input", {onchange: m.withAttr("value", todo.vm.description), value: todo.vm.description()}),
-			m("button", {onclick: todo.vm.add}, "Add"),
+			m("input", {onchange: m.withAttr("value", ctrl.description), value: ctrl.description()}),
+			m("button", {onclick: ctrl.add}, "Add"),
 			m("table", [
-				todo.vm.list.map(function(task, index) {
+				ctrl.list.map(function (task, index) {
 					return m("tr", [
 						m("td", [
 							m("input[type=checkbox]", {onclick: m.withAttr("checked", task.done), checked: task.done()})
@@ -53,6 +52,11 @@ todo.view = function () {
 			])
 		])
 	]);
-}
+};
 
-m.mount(document, {controller: todo.controller, view: todo.view});
+var todoComponent:_mithril.MithrilComponent<TodoController> = {
+	controller: todoControllerFunction,
+	view: todoView
+};
+
+m.mount(document, todoComponent);
